@@ -4,14 +4,14 @@ import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-fireba
 import { useNavigate, Link } from 'react-router-dom'
 import './Login.css'
 import auth from './Firebase';
+import Loading from '../Shared/Loading';
 
 const Login = () => {
-    const [signInWithGoogle, gUser] = useSignInWithGoogle(auth);
+    const [signInWithGoogle, gUser, gLoading] = useSignInWithGoogle(auth);
     const [
         signInWithEmailAndPassword,
         user,
         loading,
-        error,
     ] = useSignInWithEmailAndPassword(auth);
 
 
@@ -24,11 +24,13 @@ const Login = () => {
 
     const navigate = useNavigate()
 
-
     if (gUser || user) {
         navigate('/')
     }
 
+    if (loading || gLoading) {
+        return <Loading></Loading>
+    }
 
     return (
         <div className='login-form mx-auto shadow mt-5'>

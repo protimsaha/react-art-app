@@ -1,6 +1,7 @@
 import React from 'react';
-import { useCreateUserWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { useNavigate, Link } from 'react-router-dom'
+import Loading from '../Shared/Loading';
 import auth from './Firebase';
 import './Login.css'
 
@@ -8,23 +9,31 @@ const Signup = () => {
     const navigate = useNavigate()
 
 
-    const [signInWithGoogle, user] = useSignInWithGoogle(auth);
+    const [signInWithGoogle, user, gLoading] = useSignInWithGoogle(auth);
+    const [updateProfile, updating] = useUpdateProfile(auth);
+
     const [
         createUserWithEmailAndPassword,
         emailUser,
-
+        loading
     ] = useCreateUserWithEmailAndPassword(auth);
 
 
     if (user || emailUser) {
         navigate('/')
+        console.log(user, emailUser)
+    }
+    if (loading || gLoading || updating) {
+        return <Loading></Loading>
     }
 
-    const handleSignUp = (e) => {
+    const handleSignUp = async (e) => {
         e.preventDefault()
         const email = e.target.email.value
-        const password = e.target.password.value
+        const password = e.target.password.value;
+        const displayName = e.target.name.value
         createUserWithEmailAndPassword(email, password)
+        await updateProfile(displayName)
     }
 
     return (
